@@ -1,5 +1,5 @@
 [project]
-name = "claude-code-learn"
+name = "learn-claude-code"
 version = "1.0.0"
 description = "A learning project for understanding Claude Code internals through documentation and hands-on Python experiments"
 readme = "README.md"

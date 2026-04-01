@@ -15,7 +15,7 @@
 ### 运行方式
 
 ```bash
-cd claude_code_learn/examples
+cd learn_claude_code/examples
 python3 01_mini_agent.py
 python3 02_tool_use.py
 python3 03_streaming.py
@@ -42,7 +42,7 @@ Five **standalone** Python scripts with no imports from `experiments/shared/`. T
 ### How to run
 
 ```bash
-cd claude_code_learn/examples
+cd learn_claude_code/examples
 python3 01_mini_agent.py
 python3 02_tool_use.py
 python3 03_streaming.py

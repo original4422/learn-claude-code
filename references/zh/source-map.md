@@ -1,6 +1,6 @@
 # 概念 ↔ 源码速查（中文）
 
-路径相对于仓库根目录 `claude-code-snapshot/`。**文档章节**指向 `claude_code_learn/docs/zh/` 下对应总览（与顶层 `docs/zh/` 镜像内容一致时可互换）。
+路径相对于仓库根目录 `claude-code-snapshot/`。**文档章节**指向 `learn_claude_code/docs/zh/` 下对应总览（与顶层 `docs/zh/` 镜像内容一致时可互换）。
 
 | 概念 | 主要源文件 | 辅助文件 | 文档章节 |
 |------|------------|----------|----------|
@@ -25,4 +25,4 @@
 
 ---
 
-*若本地仅检出 `claude_code_learn/`，请使用仓库根目录的 `docs/zh/` 或 `claude_code_learn/docs/zh/` 中同名章节。*
+*若本地仅检出 `learn_claude_code/`，请使用仓库根目录的 `docs/zh/` 或 `learn_claude_code/docs/zh/` 中同名章节。*

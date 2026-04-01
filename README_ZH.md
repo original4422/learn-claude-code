@@ -35,7 +35,7 @@
 
 **Claude Code** 是 Anthropic 推出的面向终端/IDE 的 **CLI Agent 工具**：在真实代码库上执行读写、运行命令、调用工具，并与模型多轮对话完成任务。其生产级实现涉及 **Agent 主循环、工具协议、权限与安全、上下文与提示词、记忆、MCP、多 Agent、流式 API、上下文压缩、配置与命令系统** 等完整工程链条。
 
-本仓库 **Claude Code 研习（`claude_code_learn`）** 的定位是：
+本仓库 **Claude Code 研习（`learn_claude_code`）** 的定位是：
 
 | 维度 | 说明 |
 |------|------|
@@ -83,7 +83,7 @@
 ## 仓库结构
 
 ```text
-claude_code_learn/
+learn_claude_code/
 ├── README.md                    # 英文版 README（默认入口）
 ├── README_ZH.md                 # 本文件（中文）
 ├── Makefile                     # 常用命令：setup / test / lint / clean
@@ -166,10 +166,10 @@ claude_code_learn/
 若本目录位于更大 monorepo 中：
 
 ```bash
-cd claude_code_learn
+cd learn_claude_code
 ```
 
-若单独分发本学习包，请按你托管平台的说明克隆后进入 `claude_code_learn` 根目录。
+若单独分发本学习包，请按你托管平台的说明克隆后进入 `learn_claude_code` 根目录。
 
 ### 2. Python 虚拟环境与依赖
 
@@ -193,7 +193,7 @@ python -m exp_03_core_agent_loop.main --mock
 ### 4. 使用 Makefile（推荐）
 
 ```bash
-cd claude_code_learn        # 回到项目根目录
+cd learn_claude_code        # 回到项目根目录
 make setup                  # 创建 venv 并安装依赖
 make test EXP=03            # 运行单个实验
 make test-all               # 运行全部 15 个实验

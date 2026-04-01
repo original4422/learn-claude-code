@@ -29,7 +29,7 @@ ALL_EXPS := \
 
 help: ## Show this help message
 	@echo ""
-	@echo "  claude_code_learn"
+	@echo "  learn_claude_code"
 	@echo "  ================"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \

@@ -1,6 +1,6 @@
 # Concept ↔ Source Quick Map (English)
 
-Paths are relative to the repo root `claude-code-snapshot/`. **Doc chapter** refers to `claude_code_learn/docs/en/` (or top-level `docs/en/` if mirrored).
+Paths are relative to the repo root `claude-code-snapshot/`. **Doc chapter** refers to `learn_claude_code/docs/en/` (or top-level `docs/en/` if mirrored).
 
 | Concept | Primary sources | Supporting sources | Doc chapter |
 |---------|-----------------|--------------------|-------------|
@@ -25,4 +25,4 @@ Paths are relative to the repo root `claude-code-snapshot/`. **Doc chapter** ref
 
 ---
 
-*If you only have the `claude_code_learn/` tree checked out, use `docs/en/` or `claude_code_learn/docs/en/` for the same chapter names.*
+*If you only have the `learn_claude_code/` tree checked out, use `docs/en/` or `learn_claude_code/docs/en/` for the same chapter names.*

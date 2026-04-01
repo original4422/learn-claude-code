@@ -35,7 +35,7 @@
 
 **Claude Code** is Anthropic’s **CLI-first coding agent**: it operates on real repositories, reads and writes files, runs commands, calls tools, and converses with the model across many turns. A production implementation spans an **agent loop**, **tool protocol**, **permissions and safety**, **context and prompt assembly**, **memory**, **MCP**, **multi-agent orchestration**, **streaming APIs**, **context compaction**, **configuration**, **command systems**, and more.
 
-This repository — **Claude Code Learn (`claude_code_learn`)** — is a **learning lab** that connects those ideas to engineering practice:
+This repository — **Claude Code Learn (`learn_claude_code`)** — is a **learning lab** that connects those ideas to engineering practice:
 
 | Dimension | What you get |
 |-----------|----------------|
@@ -83,7 +83,7 @@ If you are brand new to agents, start with the **Mock** run in [Getting started]
 ## Repository layout
 
 ```text
-claude_code_learn/
+learn_claude_code/
 ├── README.md                    # This file (English, default entry)
 ├── README_ZH.md                 # Chinese README
 ├── Makefile                     # Common commands: setup / test / lint / clean
@@ -166,10 +166,10 @@ claude_code_learn/
 If this folder lives inside a larger monorepo:
 
 ```bash
-cd claude_code_learn
+cd learn_claude_code
 ```
 
-Otherwise clone your distribution and `cd` into `claude_code_learn`.
+Otherwise clone your distribution and `cd` into `learn_claude_code`.
 
 ### 2. Virtualenv + dependencies
 
@@ -193,7 +193,7 @@ You should see streamed events, state updates, and tool dispatch. Then read [`do
 ### 4. Using the Makefile (recommended)
 
 ```bash
-cd claude_code_learn        # back to project root
+cd learn_claude_code        # back to project root
 make setup                  # create venv and install dependencies
 make test EXP=03            # run a single experiment
 make test-all               # run all 15 experiments

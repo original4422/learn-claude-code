@@ -20,7 +20,7 @@ Thank you for your interest in contributing to Claude Code Learn!
 
 ```bash
 git clone <repo-url>
-cd claude_code_learn
+cd learn_claude_code
 make setup          # creates venv, installs dependencies
 make test-all       # verify everything works
 make lint           # check code style
@@ -59,7 +59,7 @@ make lint           # check code style
 
 ```bash
 git clone <repo-url>
-cd claude_code_learn
+cd learn_claude_code
 make setup          # 创建虚拟环境，安装依赖
 make test-all       # 验证所有实验可运行
 make lint           # 检查代码风格
