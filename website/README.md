@@ -27,6 +27,7 @@ npm run start
 
 ```bash
 cd website
+npm install
 npm run build
 ```
 
