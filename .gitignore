@@ -34,6 +34,15 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
+# Docusaurus / Node
+node_modules/
+.docusaurus/
+.npm-cache/
+website/node_modules/
+website/.docusaurus/
+website/.npm-cache/
+website/build/
+
 # OS
 *.log
 *.tmp

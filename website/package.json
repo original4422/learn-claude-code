@@ -1,0 +1,26 @@
+{
+  "name": "learn-claude-code-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Docusaurus documentation site for Claude Code Internals Learning Lab.",
+  "scripts": {
+    "start": "docusaurus start --host 127.0.0.1",
+    "build": "docusaurus build",
+    "serve": "docusaurus serve --host 127.0.0.1",
+    "deploy": "docusaurus deploy"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.8.1",
+    "@docusaurus/plugin-content-docs": "^3.8.1",
+    "@docusaurus/preset-classic": "^3.8.1",
+    "@docusaurus/theme-mermaid": "^3.8.1",
+    "@mermaid-js/layout-elk": "0.1.9",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20.0"
+  }
+}
