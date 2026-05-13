@@ -98,7 +98,7 @@
 @media (max-width: 800px) {
   .heroInner,
   .tracks {
-    width: min(100% - 32px, 1080px);
+    width: min(1080px, calc(100% - 32px));
   }
 
   .tracks {
