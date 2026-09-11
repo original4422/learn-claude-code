@@ -1,144 +1,87 @@
 <div align="center">
 
-# Claude Code Internals — Learning Lab
+# Claude Code 源码研习
 
-**A structured curriculum for understanding Anthropic’s Claude Code (CLI agent) implementation, grounded in a large TypeScript source snapshot**
+**从一次提问到工具执行，拆解编程 Agent 的工作原理。**
 
-[![Docs](https://img.shields.io/badge/docs-bilingual-blue.svg)](./docs/en/00-overview.md)
-[![Experiments](https://img.shields.io/badge/experiments-Python-3776AB?logo=python&logoColor=white)](./experiments/)
-[![Source](https://img.shields.io/badge/source~snapshot-TypeScript-3178C6?logo=typescript&logoColor=white)](#background)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+17 章双语导读 · 15 个 Python 实验 · 5 个独立示例 · 首个实验无需 API Key
 
-[简体中文 README](./README_ZH.md) · [Experiments](./experiments/) · [English docs overview](./docs/en/00-overview.md)
+[![文档](https://img.shields.io/badge/文档-中英双语-blue)](./docs/zh/00-overview.md)
+[![实验](https://img.shields.io/badge/实验-Python-3776AB?logo=python&logoColor=white)](./experiments/)
+[![许可证](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+
+[开始动手](#快速开始) · [选择学习路线](#学习路线) · [中文文档](./docs/zh/00-overview.md) · [English](./README_EN.md)
 
 </div>
 
----
+Claude Code 如何把一句需求变成多轮工具调用？什么时候需要确认权限？对话越来越长时，上下文又是怎样保留下来的？
 
-## Table of contents
+本项目结合 **TypeScript 源码快照导读**与 **Python 迷你实现**，把这些问题拆成可以阅读、运行和修改的实验。你可以先跑通一个 Agent 循环，再逐步理解工具、权限、记忆、MCP 和多 Agent 协作。
 
-- [Background](#background)
-- [Who this is for](#who-this-is-for)
-- [Tech stack](#tech-stack)
-- [Repository layout](#repository-layout)
-- [Getting started](#getting-started)
-- [Learning tracks](#learning-tracks)
-- [Concept map](#concept-map)
-- [Running experiments](#running-experiments)
-- [Contributing](#contributing)
-- [Acknowledgments](#acknowledgments)
-- [License](#license)
+> 这是独立的教学项目，围绕固定源码快照讲解架构模式；实验是简化实现，不代表 Claude Code 当前版本的完整行为。无需准备源码快照，也能阅读文档和运行实验。
 
----
+## 你能学到什么
 
-## Background
+| 你关心的问题 | 对应内容 | 动手入口 |
+| --- | --- | --- |
+| Agent 如何反复调用工具，直到任务结束？ | [核心循环](./docs/zh/03-core-loop.md)、[工具系统](./docs/zh/04-tool-system.md) | [核心循环实验](./experiments/exp_03_core_agent_loop/) |
+| 读写文件、执行命令前，如何判断权限？ | [权限与安全](./docs/zh/05-permission-security.md) | [权限引擎实验](./experiments/exp_05_permission_engine/) |
+| 长对话如何管理提示词、记忆与上下文？ | [提示词组装](./docs/zh/06-context-prompt.md)、[记忆](./docs/zh/07-memory-system.md)、[上下文压缩](./docs/zh/14-compact-context-mgmt.md) | [上下文压缩实验](./experiments/exp_14_context_compaction/) |
+| 如何接入外部工具，让多个 Agent 协作？ | [MCP](./docs/zh/09-mcp-integration.md)、[多 Agent](./docs/zh/10-multi-agent.md) | [MCP 实验](./experiments/exp_09_mcp_client/)、[多 Agent 实验](./experiments/exp_10_multi_agent/) |
+| 流式响应如何变成终端里的交互体验？ | [终端 UI](./docs/zh/08-terminal-ui.md)、[流式 API](./docs/zh/12-api-streaming.md) | [流式 API 实验](./experiments/exp_12_streaming_api/) |
 
-**Claude Code** is Anthropic’s **CLI-first coding agent**: it operates on real repositories, reads and writes files, runs commands, calls tools, and converses with the model across many turns. A production implementation spans an **agent loop**, **tool protocol**, **permissions and safety**, **context and prompt assembly**, **memory**, **MCP**, **multi-agent orchestration**, **streaming APIs**, **context compaction**, **configuration**, **command systems**, and more.
+适合会一点 Python、了解基本 LLM 对话与工具调用、希望进一步理解 Agent 工程实现的开发者。刚接触 Agent，可以从[最小 Agent 教程](./quick-start/zh/01-minimal-agent.md)开始；熟悉 TypeScript 的读者可以结合[源码地图](./references/zh/source-map.md)深入阅读。
 
-This repository — **Claude Code Learn (`learn_claude_code`)** — is a **learning lab** that connects those ideas to engineering practice:
+## 快速开始
 
-| Dimension | What you get |
-|-----------|----------------|
-| **Source context** | Material is aligned with a **Claude Code TypeScript snapshot** on the order of **~1,900+ files / 512k+ LOC** (a frozen teaching corpus, not a live upstream mirror) |
-| **Docs** | **17 chapters** (`00` overview … `16` design patterns) in **English and Chinese**, plus **experiment guides** under `docs/{en,zh}/experiments/` |
-| **Hands-on** | **15 Python experiments** (`exp_02` … `exp_16`) that recreate key patterns, with **Mock / Anthropic / OpenAI** backends |
-| **Extensions** | **5** standalone example scripts (`examples/`), **3** step-by-step tutorials (`quick-start/`), glossary (`glossary/`), architecture diagrams (`diagrams/`), and reference cards (`references/`) |
+准备 **Python 3.11+**。第一个核心循环实验的 Mock 模式只用标准库，无需安装依赖或配置 API Key。
 
-> **Note:** Chapter numbers line up with experiments (e.g. ch.03 core loop ↔ `exp_03_core_agent_loop`) so you can read a chapter and immediately run the matching lab.
-
----
-
-## Who this is for
-
-- Engineers and researchers who already understand **basic LLM + agent mechanics** (messages, tool calls, multi-turn chat) and want a **production-shaped mental model**  
-- Anyone who learns best by **cross-reading a large TypeScript codebase** *and* validating ideas with **small, runnable Python labs**  
-- Teams onboarding to **MCP**, **multi-agent**, or **terminal agent UIs** who want a guided map before diving into snapshot files  
-
-If you are brand new to agents, start with the **Mock** run in [Getting started](#getting-started), then pick either the **Fast** or **Full** track below.
-
----
-
-## Tech stack
-
-### Claude Code (the snapshot you read alongside this repo)
-
-| Area | Typical stack |
-|------|----------------|
-| Runtime / language | **Bun**, **TypeScript** |
-| Terminal UI | **React** + **Ink** |
-| CLI | **Commander** (and related tooling) |
-| Validation | **Zod** |
-| Protocols / SDKs | **MCP SDK**, **Anthropic SDK**, streaming + tool schemas |
-
-### This repository (labs and examples)
-
-| Area | Notes |
-|------|--------|
-| Language | **Python 3.11+** |
-| Dependencies | See [`experiments/requirements.txt`](./experiments/requirements.txt) (`anthropic`, `openai`, `pydantic`, `rich`, `textual`, …) |
-| Shared client | [`experiments/shared/`](./experiments/shared/) — unified **LLM** access (**mock**, **Anthropic**, **OpenAI-compatible**) |
-
----
-
-## Repository layout
-
-```text
-learn_claude_code/
-├── README.md                    # This file (English, default entry)
-├── README_ZH.md                 # Chinese README
-├── Makefile                     # Common commands: setup / test / lint / clean
-├── pyproject.toml               # Project metadata, ruff & pytest config
-├── LICENSE                      # MIT License
-├── CONTRIBUTING.md              # Contribution guide (bilingual)
-├── CHANGELOG.md                 # Version history
-├── .gitignore                   # Git ignore rules
-├── .editorconfig                # Editor formatting consistency
-│
-├── docs/                        # Deep-dive docs (17 chapters + experiment guides)
-│   ├── zh/                      # Chinese: 00-overview.md … 16-design-patterns.md
-│   │   └── experiments/         # 16 lab write-ups (00 guide + per-chapter labs)
-│   └── en/                      # English: same structure
-│       └── experiments/
-│
-├── experiments/                 # 15 Python labs (exp_02 … exp_16)
-│   ├── shared/                  # Shared LLM client (Anthropic / OpenAI / Mock) + types
-│   ├── exp_02_startup_flow/     # … exp_16_design_patterns/
-│   ├── …                        # 15 experiment directories total
-│   ├── requirements.txt         # Python dependencies
-│   └── README.md                # Index + focused vs comprehensive tracks
-│
-├── examples/                    # 5 standalone scripts (no external deps)
-│   ├── README.md                # Examples guide (bilingual)
-│   ├── 01_mini_agent.py         # Minimal agent (~76 lines)
-│   ├── 02_tool_use.py           # Tool definition & dispatch
-│   ├── 03_streaming.py          # Streaming event assembly
-│   ├── 04_memory.py             # File-based memory + TF-IDF
-│   └── 05_multi_agent.py        # Multi-agent coordination
-│
-├── quick-start/                 # 3 step-by-step beginner tutorials
-│   ├── zh/                      # Chinese
-│   └── en/                      # English
-│
-├── glossary/                    # Domain terminology (~60 terms)
-│   ├── zh.md
-│   └── en.md
-│
-├── diagrams/                    # 5 Mermaid architecture diagrams
-│   ├── 01-layered-architecture.md
-│   ├── 02-agent-loop-flow.md
-│   ├── 03-tool-dispatch.md
-│   ├── 04-startup-sequence.md
-│   └── 05-multi-agent.md
-│
-└── references/                  # Quick-reference cards & source maps
-    ├── zh/
-    └── en/
+```bash
+git clone https://github.com/original4422/learn-claude-code.git
+cd learn-claude-code/experiments
+python3 -m exp_03_core_agent_loop.main --mock
 ```
 
-### Chapter ↔ experiment index
+第一条查询会展示以下过程（节选）：
 
-| Ch | Doc (`docs/en/*.md` and `docs/zh/*.md`) | Python package |
-|----|----------------------------------------|----------------|
+```text
+Turn 1: Calling LLM...
+Tool Call: calculator({"expression": "2 + 3 * 4"})
+Tool Result: {"result": 14}
+Turn 2: Calling LLM...
+Assistant: The result of 2 + 3 * 4 is 14.
+Terminal: reason=completed, turns=2
+```
+
+你刚跑通了 **模型请求 → 工具调用 → 结果回传 → 下一轮响应**。Mock 使用预设响应，方便观察控制流；它不用于验证真实模型的推理能力。
+
+接下来打开[第 03 章：核心循环](./docs/zh/03-core-loop.md)和[配套实验指南](./docs/zh/experiments/03-核心Agent循环实验.md)，对照输出阅读实现。
+
+## 学习路线
+
+不必从头读完所有章节。按你现在的目标选择入口：
+
+| 路线 | 阅读与实验顺序 | 学完后能做什么 |
+| --- | --- | --- |
+| **先做一个小 Agent** | [最小 Agent](./quick-start/zh/01-minimal-agent.md) → [添加工具](./quick-start/zh/02-add-a-tool.md) → [流式聊天](./quick-start/zh/03-streaming-chat.md) | 理解最小循环，并给它添加工具与流式输出 |
+| **看懂核心架构** | [总览](./docs/zh/00-overview.md) → [架构](./docs/zh/01-architecture.md) → [循环](./docs/zh/03-core-loop.md) → [工具](./docs/zh/04-tool-system.md) → [提示词](./docs/zh/06-context-prompt.md)，配合实验 03、04、12 | 说明一条请求如何经过模型、工具和事件流 |
+| **系统研习** | [17 章文档](./docs/zh/00-overview.md) + [15 个实验](./experiments/README.md)，按章节编号推进 | 分析权限、记忆、扩展与上下文管理的设计取舍 |
+
+```mermaid
+flowchart LR
+  A[跑通核心循环] --> B[理解工具与权限]
+  B --> C[管理提示词与记忆]
+  C --> D[接入 MCP 与多 Agent]
+  D --> E[研究流式输出与上下文压缩]
+```
+
+<details>
+<summary><strong>展开完整章节与实验索引（00–16）</strong></summary>
+
+章节文件位于 `docs/zh/` 和 `docs/en/`，实验包位于 `experiments/`。编号一一对应，读完一章即可运行对应实验。
+
+| 章节 | 文档文件 | Python 实验包 |
+| --- | --- | --- |
 | 00 | `00-overview.md` | — |
 | 01 | `01-architecture.md` | — |
 | 02 | `02-startup-flow.md` | `exp_02_startup_flow` |
@@ -157,188 +100,57 @@ learn_claude_code/
 | 15 | `15-command-system.md` | `exp_15_command_system` |
 | 16 | `16-design-patterns.md` | `exp_16_design_patterns` |
 
----
+</details>
 
-## Getting started
+## 继续运行实验
 
-### 1. Open the lab root
-
-If this folder lives inside a larger monorepo:
+需要运行更多实验或连接真实模型时，在**仓库根目录**创建环境并安装依赖：
 
 ```bash
-cd learn_claude_code
-```
-
-Otherwise clone your distribution and `cd` into `learn_claude_code`.
-
-### 2. Virtualenv + dependencies
-
-```bash
+python3 -m venv experiments/.venv
+source experiments/.venv/bin/activate  # Windows: experiments\.venv\Scripts\activate
+python -m pip install -r experiments/requirements.txt
 cd experiments
-python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -U pip
-pip install -r requirements.txt
-```
-
-### 3. First experiment (Mock — no API key)
-
-```bash
-# Still inside experiments/ with venv active
 python -m exp_03_core_agent_loop.main --mock
 ```
 
-You should see streamed events, state updates, and tool dispatch. Then read [`docs/en/03-core-loop.md`](./docs/en/03-core-loop.md) alongside [`docs/en/experiments/03-core-agent-loop-lab.md`](./docs/en/experiments/03-core-agent-loop-lab.md).
+| 模式 | 命令参数 | 配置 |
+| --- | --- | --- |
+| 离线 Mock | `--mock` | 无需密钥，使用预设响应 |
+| Anthropic | `--provider anthropic` | 设置 `ANTHROPIC_API_KEY` |
+| OpenAI 兼容接口 | `--provider openai` | 设置 `OPENAI_API_KEY`，可选 `OPENAI_BASE_URL` |
 
-### 4. Using the Makefile (recommended)
-
-```bash
-cd learn_claude_code        # back to project root
-make setup                  # create venv and install dependencies
-make test EXP=03            # run a single experiment
-make test-all               # run all 15 experiments
-make lint                   # code style check
-```
-
----
-
-## Learning tracks
-
-### Overview (Mermaid)
-
-```mermaid
-flowchart LR
-  subgraph Fast["Fast track ~2h"]
-    D0[00 Overview] --> D1[01 Architecture]
-    D1 --> D3[03 Core loop]
-    D3 --> D4[04 Tools]
-    D4 --> D6[06 Context / prompt]
-    E3[exp_03] --> E4[exp_04]
-    E4 --> E12[exp_12]
-  end
-  subgraph Full["Full track 1–2 days"]
-    AllD[All 17 chapters] --> AllE[All 15 experiments]
-  end
-```
-
-### Fast track (~2 hours)
-
-| Step | Content |
-|------|---------|
-| Reading order | `00-overview` → `01-architecture` → `03-core-loop` → `04-tool-system` → `06-context-prompt` |
-| Labs | `exp_03_core_agent_loop` → `exp_04_tool_system` → `exp_12_streaming_api` (start with `--mock`) |
-
-**Outcome:** A minimal but accurate picture of **loop + tools + streaming**, ready to map back to the TypeScript snapshot.
-
-### Full track (~1–2 days)
-
-- **Docs:** all **17** chapters under `docs/en/` (or `docs/zh/`), plus experiment guides as needed  
-- **Labs:** all **15** experiments under `experiments/` at least once in **Mock** mode (covers most control-flow paths)  
-
-### By interest
-
-| Focus | Chapters | Labs |
-|-------|-----------|------|
-| **Agent core** | 03, 04, 06, 12, 14 | exp_03, exp_04, exp_06, exp_12, exp_14 |
-| **Extensibility** | 09, 10, 11, 13 | exp_09, exp_10, exp_11, exp_13 |
-| **Engineering practice** | 02, 05, 13, 15, 16 | exp_02, exp_05, exp_13, exp_15, exp_16 |
-| **Terminal / UI** | 08 | exp_08 |
-
-For “focused vs comprehensive” experiment sets, see [`experiments/README.md`](./experiments/README.md).
-
----
-
-## Concept map
-
-Topics covered mirror the chapter list — the same ideas you would expect in a mature CLI agent:
-
-```mermaid
-mindmap
-  root((Claude Code learn))
-    Agent loop
-    Tool system
-    Permission engine
-    Prompt engineering
-    Memory
-    MCP
-    Multi-agent
-    Streaming API
-    Compaction
-    Config
-    Commands
-    Design patterns
-```
-
-- **Agent loop** — multi-turn reasoning, termination, feeding tool results back  
-- **Tool system** — schemas, registration, dispatch, results  
-- **Permission engine** — gating sensitive operations  
-- **Prompt engineering** — system prompts, context assembly, constraints  
-- **Memory** — what persists across turns or sessions  
-- **MCP** — standardized tool/resource integration  
-- **Multi-agent** — delegation and merging outputs  
-- **Streaming API** — token/event streams and UI consumption  
-- **Compaction** — window management and summarization at scale  
-- **Config & commands** — flags, settings, slash commands  
-- **Design patterns** — recurring structure in a large TS codebase  
-
----
-
-## Running experiments
-
-Each lab supports three **provider modes** (see also [`experiments/README.md`](./experiments/README.md)):
-
-| Mode | When to use | Notes |
-|------|-------------|--------|
-| **mock** | Offline, CI, no keys | Deterministic / canned flows; best for control-flow learning |
-| **anthropic** | Claude API | Set `ANTHROPIC_API_KEY` |
-| **openai** | OpenAI-compatible endpoints | Set `OPENAI_API_KEY` (and base URL if your client requires it) |
-
-### Examples
+macOS / Linux 用户也可以在**仓库根目录**使用 Makefile：
 
 ```bash
-cd experiments
-source .venv/bin/activate
-
-# Mock (recommended first run)
-python -m exp_03_core_agent_loop.main --mock
-
-# Anthropic
-export ANTHROPIC_API_KEY="sk-ant-..."
-python -m exp_03_core_agent_loop.main --provider anthropic
-
-# OpenAI-compatible
-export OPENAI_API_KEY="sk-..."
-python -m exp_03_core_agent_loop.main --provider openai
+make setup        # 创建环境并安装依赖
+make test EXP=03  # 运行核心循环实验（Mock）
+make test-all     # 运行全部 15 个实验（Mock）
+make lint         # 检查代码风格
 ```
 
-Module docstrings in each `main.py` document flags; if a lab is model-sensitive, read the matching `docs/*/experiments/*` guide first.
+各实验参数以对应 `main.py` 和[实验指南](./docs/zh/experiments/00-实验指南.md)为准。
 
----
+## 资料导航
 
-## Contributing
+| 目录 | 内容 |
+| --- | --- |
+| [docs/zh](./docs/zh/00-overview.md) / [docs/en](./docs/en/00-overview.md) | 17 章双语导读与配套实验指南 |
+| [experiments](./experiments/) | 15 个 Python 实验及统一 LLM 客户端 |
+| [examples](./examples/README.md) | 5 个独立示例：最小 Agent、工具、流式、记忆、多 Agent |
+| [quick-start](./quick-start/zh/01-minimal-agent.md) | 3 篇循序渐进的入门教程 |
+| [diagrams](./diagrams/) | 5 张 Mermaid 架构图 |
+| [glossary](./glossary/zh.md) / [references](./references/zh/) | 术语表、设计模式速查与源码地图 |
+| [website](./website/README.md) | Docusaurus 文档网站与本地预览说明 |
 
-Issues and pull requests are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+默认首页为本文件；[英文版](./README_EN.md)保留英文阅读入口，[README_ZH.md](./README_ZH.md)保留原有中文链接。
 
-Before submitting: run `make test-all && make lint`, ensure no secrets are hardcoded, and keep Chinese/English content in sync.
+## 参与贡献
 
----
+欢迎修正文档、补充实验，或提出你希望拆解的 Agent 机制。遇到实验问题，请在 Issue 中附上实验编号、Python 版本、执行命令与错误输出，方便复现。
 
-## Acknowledgments
+提交代码前运行 `make test-all` 和 `make lint`，文档修改请同步中英文内容。详细说明见[贡献指南](./CONTRIBUTING.md)。
 
-Educational analysis here is grounded in a **Claude Code TypeScript source snapshot**. Thanks to Anthropic and the broader community for agent tooling and the MCP ecosystem. The prose and Python in this repository are **independent teaching materials** — they are **not** official Anthropic product documentation.
+## 致谢与许可证
 
----
-
-## License
-
-Learning materials and lab code are released under the [MIT License](./LICENSE).
-
-Any **bundled source snapshot** is for **education and research** only; comply with upstream terms. Do not use this project to imply endorsement or to misrepresent official behavior.
-
----
-
-<div align="center">
-
-**[简体中文 README](./README_ZH.md)** · Happy learning
-
-</div>
+感谢 Anthropic 与社区在 Agent 工具链和 MCP 生态上的工作。本项目的文档、实验与示例为独立教学材料，依据 [MIT 许可证](./LICENSE)发布。分析所引用的源码快照遵循其原始许可与使用条款，本项目不代表 Anthropic 官方。

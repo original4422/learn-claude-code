@@ -11,8 +11,8 @@ const baseUrl = process.env.BASE_URL || `/${projectName}/`;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Claude Code Internals',
-  tagline: 'A bilingual learning lab for understanding Claude Code internals.',
+  title: 'Claude Code 源码研习',
+  tagline: '从一次提问到工具执行，通过双语导读与 Python 实验理解编程 Agent。',
   url: siteUrl,
   baseUrl,
   organizationName,
@@ -27,8 +27,8 @@ const config = {
     },
   },
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: 'zh-Hans',
+    locales: ['zh-Hans'],
   },
   presets: [
     [
@@ -122,53 +122,54 @@ const config = {
         },
       ],
       navbar: {
-        title: 'Claude Code Internals',
+        title: 'Claude Code 源码研习',
         items: [
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
+            docsPluginId: 'zh',
             position: 'left',
-            label: 'Docs',
+            label: '中文文档',
           },
           {
-            to: '/zh/docs/overview',
+            to: '/docs/overview',
             position: 'left',
-            label: '中文',
+            label: 'English',
           },
           {
             type: 'dropdown',
             position: 'left',
-            label: 'Quick Start',
+            label: '快速开始',
             items: [
-              {
-                label: 'English',
-                to: '/quick-start/minimal-agent',
-              },
               {
                 label: '中文',
                 to: '/zh/quick-start/minimal-agent',
+              },
+              {
+                label: 'English',
+                to: '/quick-start/minimal-agent',
               },
             ],
           },
           {
             type: 'dropdown',
             position: 'left',
-            label: 'References',
+            label: '参考资料',
             items: [
-              {
-                label: 'English',
-                to: '/references/pattern-cheatsheet',
-              },
               {
                 label: '中文',
                 to: '/zh/references/pattern-cheatsheet',
+              },
+              {
+                label: 'English',
+                to: '/references/pattern-cheatsheet',
               },
             ],
           },
           {
             to: '/diagrams/layered-architecture',
             position: 'left',
-            label: 'Diagrams',
+            label: '架构图',
           },
           {
             href: `https://github.com/${organizationName}/${projectName}`,
@@ -181,49 +182,24 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Learn',
+            title: '开始学习',
             items: [
-              {
-                label: 'English docs',
-                to: '/docs/overview',
-              },
-              {
-                label: '中文文档',
-                to: '/zh/docs/overview',
-              },
-              {
-                label: 'Quick start',
-                to: '/quick-start/minimal-agent',
-              },
-              {
-                label: '中文快速开始',
-                to: '/zh/quick-start/minimal-agent',
-              },
+              {label: '中文文档', to: '/zh/docs/overview'},
+              {label: '快速开始', to: '/zh/quick-start/minimal-agent'},
+              {label: '实验指南', to: '/zh/docs/experiments/实验指南'},
+              {label: 'English docs', to: '/docs/overview'},
             ],
           },
           {
-            title: 'Resources',
+            title: '学习资料',
             items: [
-              {
-                label: 'References',
-                to: '/references/pattern-cheatsheet',
-              },
-              {
-                label: '中文参考',
-                to: '/zh/references/pattern-cheatsheet',
-              },
-              {
-                label: 'Glossary',
-                to: '/glossary/en',
-              },
-              {
-                label: '中文术语',
-                to: '/glossary/zh',
-              },
+              {label: '中文参考', to: '/zh/references/pattern-cheatsheet'},
+              {label: '中文术语', to: '/glossary/zh'},
+              {label: '架构图', to: '/diagrams/layered-architecture'},
             ],
           },
           {
-            title: 'Source',
+            title: '项目源码',
             items: [
               {
                 label: 'GitHub',
@@ -232,7 +208,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Claude Code Internals contributors.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Claude Code 源码研习贡献者。`,
       },
       prism: {
         theme: lightCodeTheme,
