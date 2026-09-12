@@ -1,6 +1,6 @@
 <div align="center">
 
-# Claude Code 源码研习
+# Claude Code 源码学习
 
 **从一次提问到工具执行，拆解编程 Agent 的工作原理。**
 
