@@ -1,0 +1,20 @@
+{
+  "title": {
+    "message": "Claude Code Internals"
+  },
+  "item.label.中文文档": {
+    "message": "Chinese docs"
+  },
+  "item.label.快速开始": {
+    "message": "Quick start"
+  },
+  "item.label.参考资料": {
+    "message": "References"
+  },
+  "item.label.架构图": {
+    "message": "Diagrams"
+  },
+  "item.label.中文": {
+    "message": "中文"
+  }
+}

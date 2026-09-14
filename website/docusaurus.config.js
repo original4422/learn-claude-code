@@ -5,14 +5,17 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
 const organizationName = process.env.ORGANIZATION_NAME || 'original4422';
 const projectName = process.env.PROJECT_NAME || 'learn-claude-code';
+const isEnglish = process.env.DOCUSAURUS_CURRENT_LOCALE === 'en';
 const deploymentBranch = process.env.DEPLOYMENT_BRANCH || 'html';
 const siteUrl = process.env.SITE_URL || `https://${organizationName}.github.io`;
 const baseUrl = process.env.BASE_URL || `/${projectName}/`;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Claude Code 源码研习',
-  tagline: '从一次提问到工具执行，通过双语导读与 Python 实验理解编程 Agent。',
+  title: isEnglish ? 'Claude Code Internals' : 'Claude Code 源码研习',
+  tagline: isEnglish
+    ? 'Understand coding agents through guided chapters and runnable Python labs.'
+    : '从一次提问到工具执行，通过双语导读与 Python 实验理解编程 Agent。',
   url: siteUrl,
   baseUrl,
   organizationName,
@@ -28,7 +31,11 @@ const config = {
   },
   i18n: {
     defaultLocale: 'zh-Hans',
-    locales: ['zh-Hans'],
+    locales: ['zh-Hans', 'en'],
+    localeConfigs: {
+      'zh-Hans': {label: '简体中文', htmlLang: 'zh-Hans'},
+      en: {label: 'English', htmlLang: 'en'},
+    },
   },
   presets: [
     [
@@ -125,6 +132,10 @@ const config = {
         title: 'Claude Code 源码研习',
         items: [
           {
+            type: 'localeDropdown',
+            position: 'right',
+          },
+          {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             docsPluginId: 'zh',
@@ -134,7 +145,7 @@ const config = {
           {
             to: '/docs/overview',
             position: 'left',
-            label: 'English',
+            label: 'English docs',
           },
           {
             type: 'dropdown',
@@ -208,7 +219,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Claude Code 源码研习贡献者。`,
+        copyright: `Copyright © ${new Date().getFullYear()} ${isEnglish ? 'Claude Code Internals contributors.' : 'Claude Code 源码研习贡献者。'}`,
       },
       prism: {
         theme: lightCodeTheme,

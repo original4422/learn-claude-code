@@ -1,0 +1,29 @@
+{
+  "link.title.开始学习": {
+    "message": "Start learning"
+  },
+  "link.title.学习资料": {
+    "message": "Resources"
+  },
+  "link.title.项目源码": {
+    "message": "Source"
+  },
+  "link.item.label.中文文档": {
+    "message": "Chinese docs"
+  },
+  "link.item.label.快速开始": {
+    "message": "Chinese quick start"
+  },
+  "link.item.label.实验指南": {
+    "message": "Chinese lab guide"
+  },
+  "link.item.label.中文参考": {
+    "message": "Chinese references"
+  },
+  "link.item.label.中文术语": {
+    "message": "Chinese glossary"
+  },
+  "link.item.label.架构图": {
+    "message": "Diagrams"
+  }
+}
