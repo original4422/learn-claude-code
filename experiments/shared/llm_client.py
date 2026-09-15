@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator
 
@@ -119,7 +120,7 @@ class UnifiedLLMClient:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "max_tokens": max_tokens,
-            "messages": messages,
+            "messages": self._to_anthropic_messages(messages),
         }
         if system:
             kwargs["system"] = system
@@ -139,7 +140,7 @@ class UnifiedLLMClient:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "max_tokens": max_tokens,
-            "messages": messages,
+            "messages": self._to_anthropic_messages(messages),
             "stream": True,
         }
         if system:
@@ -152,6 +153,38 @@ class UnifiedLLMClient:
                 parsed = self._parse_anthropic_stream_event(event)
                 if parsed:
                     yield parsed
+
+    def _to_anthropic_messages(self, messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Encode assistant calls and group consecutive results into one user turn."""
+        anthropic: list[dict[str, Any]] = []
+        previous_was_result = False
+        for msg in deepcopy(messages):
+            if msg["role"] == "tool_result":
+                block = {
+                    "type": "tool_result",
+                    "tool_use_id": msg["tool_use_id"],
+                    "content": msg.get("content", ""),
+                }
+                if "is_error" in msg:
+                    block["is_error"] = msg["is_error"]
+                if previous_was_result:
+                    anthropic[-1]["content"].append(block)
+                else:
+                    anthropic.append({"role": "user", "content": [block]})
+                previous_was_result = True
+                continue
+
+            previous_was_result = False
+            if msg["role"] == "assistant" and "tool_uses" in msg:
+                tool_uses = msg.pop("tool_uses")
+                if tool_uses:
+                    content = msg.get("content")
+                    blocks = content if isinstance(content, list) else (
+                        [{"type": "text", "text": content}] if content else []
+                    )
+                    msg["content"] = blocks + [{"type": "tool_use", **tool_use} for tool_use in tool_uses]
+            anthropic.append(msg)
+        return anthropic
 
     def _parse_anthropic_response(self, resp: Any) -> LLMResponse:
         text_parts: list[str] = []
@@ -267,14 +300,29 @@ class UnifiedLLMClient:
         oai: list[dict[str, Any]] = []
         if system:
             oai.append({"role": "system", "content": system})
-        for msg in messages:
+        for msg in deepcopy(messages):
             if msg["role"] == "tool_result":
                 oai.append({
                     "role": "tool",
-                    "tool_call_id": msg.get("tool_use_id", ""),
+                    "tool_call_id": msg["tool_use_id"],
                     "content": msg.get("content", ""),
                 })
             else:
+                if msg["role"] == "assistant" and "tool_uses" in msg:
+                    tool_uses = msg.pop("tool_uses")
+                    if tool_uses:
+                        msg["content"] = msg.get("content") or None
+                        msg["tool_calls"] = [
+                            {
+                                "id": tool_use["id"],
+                                "type": "function",
+                                "function": {
+                                    "name": tool_use["name"],
+                                    "arguments": json.dumps(tool_use["input"]),
+                                },
+                            }
+                            for tool_use in tool_uses
+                        ]
                 oai.append(msg)
         return oai
 

@@ -165,7 +165,7 @@ async def agent_loop(
             return
 
         # --- Execute tools ---
-        assistant_msg: dict[str, Any] = {"role": "assistant", "content": response.text}
+        assistant_msg = response.to_message()
         new_messages = list(state.messages) + [assistant_msg]
 
         for tool_use in response.tool_uses:
